@@ -30,6 +30,7 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+        log.info(">>jwtFilter<<");
 
         String accessToken = request.getHeader("access");
 
@@ -48,7 +49,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
             // response body
             PrintWriter writer = response.getWriter();
-            writer.println("해당 access token 은 만료되었습니다.");
+            writer.println("this token is expired");
 
             // response status code
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // client 와 협의한 특정 코드를 보내서 client 에서 refresh token 을 다시 요청하도록 하자
@@ -78,9 +79,9 @@ public class JwtFilter extends OncePerRequestFilter {
                 .role(role)
                 .build();
 
-        CustomUserDetails customUserDetails = new CustomUserDetails(user);
-
-        Authentication auth = new UsernamePasswordAuthenticationToken(customUserDetails,null,customUserDetails.getAuthorities());
+   //     CustomUserDetails customUserDetails = new CustomUserDetails(user);
+   //     Authentication auth = new UsernamePasswordAuthenticationToken(customUserDetails,null,customUserDetails.getAuthorities());
+        Authentication auth = new UsernamePasswordAuthenticationToken(userId,null,null);
         SecurityContextHolder.getContext().setAuthentication(auth);
 
         log.info("토큰 인증 성공");

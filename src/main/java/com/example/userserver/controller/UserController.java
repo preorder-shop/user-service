@@ -56,7 +56,7 @@ public class UserController {
     @GetMapping("")
     public BaseResponse<UserDto> getUserInfo(){
         String userId = getUserIdFromAuthentication();
-
+        log.info("UserController getUserInfo userId : {}",userId);
         UserDto userDto = userService.getUserInfo(userId);
 
         return new BaseResponse<>(userDto);
@@ -74,10 +74,8 @@ public class UserController {
     @PatchMapping("")
     public BaseResponse<String> patchUserInfo(MultipartFile profileImage, String name, String greeting){
 
-
         String userId = getUserIdFromAuthentication();
-        System.out.println("userId 확인");
-        System.out.println(userId);
+        log.info("UserController patchUserInfo userId :{}",userId);
         String img_url=null;
 
         if(profileImage!=null && !profileImage.isEmpty()){
@@ -92,6 +90,7 @@ public class UserController {
     @PostMapping("/reissue") // access token 재발급
     public BaseResponse<?> reissue(HttpServletRequest request, HttpServletResponse response){
         String refreshToken = getRefreshInCookie(request);
+        log.info("UserController reissue refreshToken :{}",refreshToken);
 
         if(refreshToken==null){
             throw new BaseException(REFRESH_INVALID);
@@ -110,11 +109,13 @@ public class UserController {
     public BaseResponse<String> logout(HttpServletRequest request, HttpServletResponse response){ // -> 로그아웃 요청시 access token + refresh token 도 같이 보내도록함.
 
         String refreshToken = getRefreshInCookie(request);
+
         if(refreshToken==null){
             throw new BaseException(REFRESH_INVALID);
         }
 
-        userService.deleteRefreshToken(refreshToken); // delete refresh
+        userService.logout(refreshToken);
+
         expireCookie(response,"refresh");
         response.addHeader("access",""); // delete access
 
@@ -132,19 +133,24 @@ public class UserController {
             throw new BaseException(REFRESH_INVALID);
         }
 
-        userService.deleteAllRefreshToken(userId); // delete refresh
+        userService.logoutAll(userId,refreshToken);
+
         expireCookie(response,"refresh");
         response.addHeader("access",""); // delete access
 
         return new BaseResponse<>("전체 로그아웃을 완료했습니다.");
     }
 
+    @PatchMapping("/password")
+    public BaseResponse<?> changePassword(String password){
+        String userId = getUserIdFromAuthentication();
+        log.info("UserController patchUserInfo userId :{}",userId);
+        checkPasswordValidation(password);
 
-
-    private boolean isInvalidRefreshToken(){
-
-        return false;
+        userService.patchPassword(userId,password);
+        return new BaseResponse<>("비밀번호 변경을 완료했습니다.");
     }
+
 
     private String getRefreshInCookie(HttpServletRequest request){
         String refresh = null;

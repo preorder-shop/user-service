@@ -190,16 +190,16 @@ public class UserService {
 
     }
 
-    public String patchPassword(PatchPasswordReq patchPasswordReq, String userId,String token) {
+    public String patchPassword(String userId,String password) {
 
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new BaseException(USERS_INVALID_ID));
 
-        String newPassword = encoder.encode(patchPasswordReq.getPassword());
+        String newPassword = encoder.encode(password);
 
         user.changePassword(newPassword);
 
-        deleteAllRefreshToken(token); // 전체 기기 로그아웃
+        deleteAllRefreshToken(userId); // 전체 기기 로그아웃
 
         return "비밀번호 변경을 완료했습니다.";
 
@@ -221,27 +221,19 @@ public class UserService {
     }
 
 
-//    public List<String> getUserIdAndRole(String email) {
-//
-//        List<String> userInfo = new ArrayList<>();
-//
-//        User user = userRepository.findByEmail(email)
-//                .orElseThrow(() -> new BaseException(INVALID_LOGIN));
-//
-//        userInfo.add(user.getUserId());
-//        userInfo.add(user.getRole());
-//
-//
-//        return userInfo;
-//    }
-
-
-
-
     public void validateUserId(String userId){
         userRepository.findByUserId(userId)
                 .orElseThrow(()->new BaseException(TOKEN_INVALID));
 
     }
 
+    public void logout(String refreshToken) {
+        jwtUtil.validateToken(refreshToken);
+        deleteRefreshToken(refreshToken);
+    }
+
+    public void logoutAll(String userId,String refreshToken) {
+        jwtUtil.validateToken(refreshToken);
+        deleteAllRefreshToken(userId);
+    }
 }
