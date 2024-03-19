@@ -15,8 +15,8 @@ public class SignUpReq {
     @Size(min = 2,message = "Email not be less than two characters")
     private String email;
 
-    @NotNull(message = "certification code cannot be null")
-    private String code;
+//    @NotNull(message = "certification code cannot be null")
+//    private String code;
     @NotNull(message = "name cannot be null")
     private String name;
 

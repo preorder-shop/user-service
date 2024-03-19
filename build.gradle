@@ -68,6 +68,9 @@ dependencies {
     // redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+    // mock test
+    testImplementation "org.mockito:mockito-core:3.+"
+
 
 }
 

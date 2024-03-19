@@ -12,6 +12,7 @@ import com.example.userserver.common.exceptions.BaseException;
 import com.example.userserver.common.mail.CertificationNumber;
 import com.example.userserver.common.util.JwtUtil;
 import com.example.userserver.domain.dto.TokenDto;
+import com.example.userserver.domain.dto.request.EmailAndCodeReq;
 import com.example.userserver.domain.dto.request.EmailCertificationReq;
 import com.example.userserver.domain.dto.request.PatchPasswordReq;
 import com.example.userserver.domain.dto.request.SignUpReq;
@@ -46,7 +47,7 @@ public class UserService {
     private final JwtUtil jwtUtil;
     private final RefreshTokenRepository refreshTokenRepository;
     private final S3Service s3Service;
-    private final ActivityServiceClient activityServiceClient;
+ //   private final ActivityServiceClient activityServiceClient;
 
     public SignUpRes createUser(SignUpReq signUpReq) {
 
@@ -55,10 +56,10 @@ public class UserService {
             throw new BaseException(POST_USERS_EXISTS_EMAIL);
         }
 
-        boolean result = emailRedisRepository.checkEmailCertificationNumber(signUpReq.getEmail(), signUpReq.getCode());
-        if(!result){
-            throw new BaseException(CERTIF_INVALID_CODE_OR_EMAIL);
-        }
+//        boolean result = emailRedisRepository.checkEmailCertificationNumber(signUpReq.getEmail(), signUpReq.getCode());
+//        if(!result){
+//            throw new BaseException(CERTIF_INVALID_CODE_OR_EMAIL);
+//        }
 
         // 회원가입 진행
         User user = signUpReq.toEntity(encoder.encode(signUpReq.getPassword())); // 회원 entity 생성
@@ -88,6 +89,14 @@ public class UserService {
 
         return "해당 이메일로 인증코드를 전송했습니다.";
 
+    }
+
+    public void emailAndCodeCheck(EmailAndCodeReq emailAndCodeReq) {
+
+        boolean result = emailRedisRepository.checkEmailCertificationNumber(emailAndCodeReq.getEmail(), emailAndCodeReq.getCode());
+        if(!result){
+            throw new BaseException(CERTIF_INVALID_CODE_OR_EMAIL);
+        }
     }
 
     public UserDto getUserInfo(String userId) {
@@ -205,16 +214,16 @@ public class UserService {
 
     }
 
-    public List<String> getFollowers(String userId) {
-        User user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new BaseException(USERS_INVALID_ID));
-
-        List<GetFollowerRes> getFollowerResList = activityServiceClient.getFollowers(userId);
-        List<String> longList = new ArrayList<>();
-        getFollowerResList.forEach(v -> longList.add(v.getFollowerId()));
-        return longList;
-
-    }
+//    public List<String> getFollowers(String userId) {
+//        User user = userRepository.findByUserId(userId)
+//                .orElseThrow(() -> new BaseException(USERS_INVALID_ID));
+//
+//        List<GetFollowerRes> getFollowerResList = activityServiceClient.getFollowers(userId);
+//        List<String> longList = new ArrayList<>();
+//        getFollowerResList.forEach(v -> longList.add(v.getFollowerId()));
+//        return longList;
+//
+//    }
 
     private boolean checkEmailDuplication(String email) {
         return userRepository.existsByEmail(email);
@@ -236,4 +245,6 @@ public class UserService {
         jwtUtil.validateToken(refreshToken);
         deleteAllRefreshToken(userId);
     }
+
+
 }
