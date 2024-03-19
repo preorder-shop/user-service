@@ -67,7 +67,8 @@ public class UserService {
 
         emailRedisRepository.deleteEmailCertificationNumber(signUpReq.getEmail());
 
-        return new SignUpRes(save.getUserId(), save.getName(), save.getEmail(), save.getGreeting());
+   //     return new SignUpRes(save.getUserId(), save.getName(), save.getEmail(), save.getGreeting());
+        return new SignUpRes("dfsdfds",signUpReq.getName(), signUpReq.getEmail(), signUpReq.getGreeting());
     }
 
     public String emailCertificate(EmailCertificationReq emailCertificationReq) {

@@ -4,11 +4,12 @@ import com.example.userserver.domain.entity.User;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.util.UUID;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
+@Getter @Setter
+@AllArgsConstructor
 public class SignUpReq {
 
     @NotNull(message = "Email cannot be null")
