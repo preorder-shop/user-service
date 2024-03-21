@@ -1,5 +1,6 @@
 package com.example.userserver.common.config;
 
+import com.example.userserver.common.filter.AuthenticationFilter;
 import com.example.userserver.common.filter.JwtFilter;
 import com.example.userserver.common.filter.LoginFilter;
 import com.example.userserver.common.util.JwtUtil;
@@ -12,6 +13,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -60,13 +62,13 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
 
         httpSecurity
-                .csrf((auth) -> auth.disable());
+                .csrf(AbstractHttpConfigurer::disable);
 
         httpSecurity
-                .formLogin((auth) -> auth.disable());
+                .formLogin(AbstractHttpConfigurer::disable);
 
         httpSecurity
-                .httpBasic((auth) -> auth.disable());
+                .httpBasic(AbstractHttpConfigurer::disable);
 
         // 인증 인가 관련
         httpSecurity
@@ -95,7 +97,10 @@ public class SecurityConfig {
         loginFilter.setFilterProcessesUrl("/users/login");
 
         httpSecurity
-                .addFilterBefore(new JwtFilter(jwtUtil), LoginFilter.class); // 로그인 필터 앞단에 배치
+                .addFilterBefore(new AuthenticationFilter(), LoginFilter.class); // 로그인 필터 앞단에 배치
+
+//        httpSecurity
+//                .addFilterBefore(new JwtFilter(jwtUtil), LoginFilter.class); // 로그인 필터 앞단에 배치
 
         httpSecurity
                 .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class);

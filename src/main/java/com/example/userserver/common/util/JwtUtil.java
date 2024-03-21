@@ -53,7 +53,7 @@ public class JwtUtil {
     public void validateToken(String token) {
         try {
             Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token);
-            log.info("유요한 JWT 토큰입니다.");
+            log.info("유효한 JWT 토큰입니다.");
         } catch (SecurityException | MalformedJwtException e) {
             log.info("잘못된 JWT 서명입니다.");
             throw new BaseException(BaseResponseStatus.TOKEN_INVALID);
