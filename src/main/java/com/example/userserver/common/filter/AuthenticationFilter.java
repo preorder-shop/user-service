@@ -21,7 +21,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
         String userId = request.getHeader("X-USER-ID");
 
-        log.info("user service > AuthenticationFilter > userId :{}",userId);
+        log.info("user msa service > AuthenticationFilter > userId :{}",userId);
 
         if(userId==null){
             log.info("X-USER-ID null");

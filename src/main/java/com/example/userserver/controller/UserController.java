@@ -99,7 +99,7 @@ public class UserController {
         return new BaseResponse<>(result);
     }
 
-    @PostMapping("/reissue") // access token 재발급
+    @GetMapping("/reissue") // access token 재발급
     public BaseResponse<?> reissue(HttpServletRequest request, HttpServletResponse response) {
         String refreshToken = getRefreshInCookie(request);
         log.info("UserController reissue refreshToken :{}", refreshToken);
@@ -199,6 +199,10 @@ public class UserController {
         response.addCookie(cookie);
     }
 
+
+
+
+    // =========== 유효성 검사 관련 함수 ===========
     private void checkUsernameValidation(String name) {
         if (name == null || name.isBlank()) {
             throw new BaseException(USERS_EMPTY_USER_NAME);

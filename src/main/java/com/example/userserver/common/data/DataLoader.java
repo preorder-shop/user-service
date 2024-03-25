@@ -23,16 +23,36 @@ public class DataLoader implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
 
-        User user = User.builder()
+        User user1 = User.builder()
                 .userId(UUID.randomUUID().toString())
                 .name("홍길동")
-                .email("test@naver.com")
+                .email("1@naver.com")
                 .password(encoder.encode("1234"))
                 .role("ROLE_USER")
                 .greeting("hello world~!")
                 .build();
 
-        userRepository.save(user);
+        User user2 = User.builder()
+                .userId(UUID.randomUUID().toString())
+                .name("둘리")
+                .email("2@naver.com")
+                .password(encoder.encode("1234"))
+                .role("ROLE_USER")
+                .greeting("hello world~!")
+                .build();
+
+        User user3 = User.builder()
+                .userId(UUID.randomUUID().toString())
+                .name("도너")
+                .email("3@naver.com")
+                .password(encoder.encode("1234"))
+                .role("ROLE_USER")
+                .greeting("hello world~!")
+                .build();
+
+        userRepository.save(user1);
+        userRepository.save(user2);
+        userRepository.save(user3);
         log.info("유저 데이터 초기화");
 
     }

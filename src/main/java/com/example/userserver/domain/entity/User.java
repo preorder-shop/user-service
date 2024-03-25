@@ -23,7 +23,7 @@ public class User extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // table pk
 
-    @Column(unique = true,nullable = false)
+    @Column(unique = true,nullable = false, name = "user_id")
     private String userId; // UUID
 
     @Column(nullable = false)
